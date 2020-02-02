@@ -3,6 +3,7 @@ from pygame.locals import *
 import sys
 
 from entities import *
+from pantallas import *
 
 FPS = 60
 WHITE = (255, 255, 255)
@@ -15,6 +16,7 @@ class Game:
     def __init__(self):
         self.screen = pg.display.set_mode((800,600))
         pg.display.set_caption("ooook")
+        self.pantallaActiva = HistoriaPantalla()
 
     def quitGame(self):
         pg.quit()
@@ -30,12 +32,10 @@ class Game:
     def mainloop(self):
         while True:
             dt = self.clock.tick(FPS)
+            self.pantallaActiva.draw(self.screen)
+            self.pantallaActiva.handleEvents(pg.event)
             self.handleEvents()
-            self.screen.fill(YELLOW)
-
-            
             pg.display.flip()
-    
     
 
 if __name__ == '__main__':
