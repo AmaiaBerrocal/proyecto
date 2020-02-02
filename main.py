@@ -16,25 +16,15 @@ class Game:
     def __init__(self):
         self.screen = pg.display.set_mode((800,600))
         pg.display.set_caption("ooook")
-        self.pantallaActiva = HistoriaPantalla()
-
-    def quitGame(self):
-        pg.quit()
-        sys.exit()
-
-
-    def handleEvents(self):
-        for event in pg.event.get():
-            if event.type == QUIT:
-                self.quitGame()
-
+        self.pantallaActiva = InicioPantalla()
                     
     def mainloop(self):
         while True:
             dt = self.clock.tick(FPS)
+            
             self.pantallaActiva.draw(self.screen)
             self.pantallaActiva.handleEvents(pg.event)
-            self.handleEvents()
+            
             pg.display.flip()
     
 
