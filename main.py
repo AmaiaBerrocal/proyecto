@@ -15,8 +15,8 @@ class Game:
 
     def __init__(self):
         self.screen = pg.display.set_mode((800,600))
-        pg.display.set_caption("ooook")
-        self.pantallaActiva = InicioPantalla()
+        pg.display.set_caption("La búsqueda")
+        self.pantallaActiva = ScorePantalla()
                     
     def mainloop(self):
         while True:

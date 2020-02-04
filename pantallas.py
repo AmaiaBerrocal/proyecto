@@ -2,44 +2,16 @@ import pygame as pg
 from pygame.locals import *
 import sys
 
-class HistoriaPantalla():
-    
-    def __init__(self):
-        self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
-        
-        self.font = pg.font.Font('resources/fonts/font.ttf', 28)
-        self.texto = self.font.render("historia", True, (100,100,100))
-        self.texto_saltar_intro = self.font.render("saltar intro <space>", True, (100,100,100))
-
-        #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
-        
-
-    def draw(self, screen):
-        screen.blit(self.background_img, (0, 0))
-        rect = self.texto.get_rect()
-        screen.blit(self.texto, (100, 300))
-        screen.blit(self.texto_saltar_intro, (400, 550))
-
-    def handleEvents(self, event):
-        for ev in event.get():
-            if ev.type == QUIT:
-                pg.quit()
-                sys.exit()
-            if ev.type == KEYDOWN:
-                if ev.key == K_SPACE:
-                    print("siguiente pantalla")
-        
 
 class InicioPantalla():
-   
     def __init__(self):
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
         
         self.font_texto = pg.font.Font('resources/fonts/PressStart2P.ttf', 50)
-        self.texto = self.font_texto.render("TITULO", True, (100,100,100))
+        self.texto = self.font_texto.render("LA BÚSQUEDA", True, (100,100,100))
 
-        self.font_texto_start = pg.font.Font('resources/fonts/PressStart2P.ttf', 28)
-        self.texto_start = self.font_texto_start.render("Start <space>", True, (100,100,100))
+        self.font_texto_start = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
+        self.texto_start = self.font_texto_start.render("Empezar <espacio>", True, (100,100,100))
 
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
         
@@ -57,6 +29,85 @@ class InicioPantalla():
                 sys.exit()
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
-                    print("inicio de juego")
+                    print("Paso a HistoriaPantalla")
+
+
+class HistoriaPantalla():
+    def __init__(self):
+        self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
+        
+        self.font_historia = pg.font.Font('resources/fonts/PressStart2P.ttf', 28)
+        self.historia = self.font_historia.render("historia", True, (100,100,100))
+        
+        self.font_saltar_intro = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
+        self.saltar_intro = self.font_saltar_intro.render("Saltar intro <espacio>", True, (100,100,100))
+
+        #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
+        
+
+    def draw(self, screen):
+        screen.blit(self.background_img, (0, 0))
+        
+        screen.blit(self.historia, (100, 300))
+        screen.blit(self.saltar_intro, (250, 550))
+
+    def handleEvents(self, event):
+        for ev in event.get():
+            if ev.type == QUIT:
+                pg.quit()
+                sys.exit()
+            if ev.type == KEYDOWN:
+                if ev.key == K_SPACE:
+                    print("Paso a JuegoPantalla")
+                    pantantallaActiva = InicioPantalla()
+
+
+class JuegoPantalla:
+    def __init__(self):
+        self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
+      
+        self.font_marcador = pg.font.Font('resources/fonts/PressStart2P.ttf', 28)
+        self.marcador = self.font.render("0", True, WHITE)
+        self.font_vidas = pg.font.Font('resources/fonts/PressStart2P.ttf', 28)
+        self.vidas = self.font.render("0", True, WHITE)
+        
+        #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
+    
+    def draw(self, screen):
+        screen.blit(self.background_img, (0, 0))
+
 
     
+    
+class ScorePantalla:
+    def __init__(self):
+        self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
+        
+        self.font_puntuacion = pg.font.Font('resources/fonts/PressStart2P.ttf', 28)
+        self.puntuacion = self.font_puntuacion.render("Puntuación", True, (100,100,100))
+        
+        self.font_texto_salir = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
+        self.texto_salir = self.font_texto_salir.render("Salir <espacio>", True, (100,100,100))
+
+        #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
+
+    def draw(self, screen):
+        screen.blit(self.background_img, (0, 0))
+        
+        screen.blit(self.puntuacion, (100, 300))
+        screen.blit(self.texto_salir, (250, 550))
+
+    def handleEvents(self, event):
+        for ev in event.get():
+            if ev.type == QUIT:
+                pg.quit()
+                sys.exit()
+            if ev.type == KEYDOWN:
+                if ev.key == K_SPACE:
+                    print("Paso a InicioPantalla")
+                    
+
+
+
+
+
