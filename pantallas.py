@@ -2,6 +2,7 @@ import pygame as pg
 from pygame.locals import *
 import sys
 
+from entities import *
 
 class InicioPantalla():
     def __init__(self):
@@ -67,15 +68,34 @@ class JuegoPantalla:
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
       
         self.font_marcador = pg.font.Font('resources/fonts/PressStart2P.ttf', 28)
-        self.marcador = self.font.render("0", True, WHITE)
+        self.marcador = self.font_marcador.render("0", True, WHITE)
         self.font_vidas = pg.font.Font('resources/fonts/PressStart2P.ttf', 28)
-        self.vidas = self.font.render("0", True, WHITE)
+        self.vidas = self.font_vidas.render("0", True, WHITE)
         
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
+
+        self.player = Nave()
+    
     
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))
+        screen.blit(self.marcador, (20, 20))
+        screen.blit(self.vidas, (550, 20))
+        screen.blit(self.player)
 
+     def handleEvents(self, event):
+        if event.type == KEYDOWN:
+                if event.key == K_UP:
+                    self.player.go_up()
+                if event.key == K_DOWN:
+                    self.player.go_down()
+
+        keys_pressed = pg.key.get_pressed()
+        if keys_pressed[K_UP]:
+            self.player.go_up()
+        if keys_pressed[K_DOWN]:
+            self.player.go_down()  
+                       
 
     
     
