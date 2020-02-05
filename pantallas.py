@@ -4,6 +4,9 @@ import sys
 
 from entities import *
 
+FPS = 60
+WHITE = (255, 255, 255)
+
 class InicioPantalla():
     def __init__(self):
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
@@ -67,24 +70,31 @@ class JuegoPantalla:
     def __init__(self):
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
       
-        self.font_marcador = pg.font.Font('resources/fonts/PressStart2P.ttf', 28)
-        self.marcador = self.font_marcador.render("0", True, WHITE)
-        self.font_vidas = pg.font.Font('resources/fonts/PressStart2P.ttf', 28)
-        self.vidas = self.font_vidas.render("0", True, WHITE)
+        self.font_puntos = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
+        self.marcadorP = self.font_puntos.render("Puntos:", True, WHITE)
+        self.puntos = self.font_puntos.render("0", True, WHITE)
+        self.font_vidas = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
+        self.marcadorV = self.font_vidas.render("Vidas:", True, WHITE)
+        self.vidas = self.font_vidas.render("3", True, WHITE)
         
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
 
         self.player = Nave()
     
-    
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))
-        screen.blit(self.marcador, (20, 20))
-        screen.blit(self.vidas, (550, 20))
-        screen.blit(self.player)
+        screen.blit(self.marcadorP, (550, 20))
+        screen.blit(self.puntos, (700, 20)) #igual tengo que poner la y más cerca del borde
+        screen.blit(self.marcadorV, (550, 40))
+        screen.blit(self.vidas, (700, 40))
+        screen.blit(self.player.image, self.player.rect)
 
-     def handleEvents(self, event):
-        if event.type == KEYDOWN:
+    def handleEvents(self, event):
+        for event in event.get():
+            if event.type == QUIT:
+                pg.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
                 if event.key == K_UP:
                     self.player.go_up()
                 if event.key == K_DOWN:
@@ -95,9 +105,7 @@ class JuegoPantalla:
             self.player.go_up()
         if keys_pressed[K_DOWN]:
             self.player.go_down()  
-                       
-
-    
+                     
     
 class ScorePantalla:
     def __init__(self):
