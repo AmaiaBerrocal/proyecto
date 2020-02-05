@@ -75,11 +75,12 @@ class JuegoPantalla:
         self.puntos = self.font_puntos.render("0", True, WHITE)
         self.font_vidas = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
         self.marcadorV = self.font_vidas.render("Vidas:", True, WHITE)
-        self.vidas = self.font_vidas.render("3", True, WHITE)
+        self.vidas = self.font_vidas.render("0", True, WHITE)
         
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
 
         self.player = Nave()
+        #self.enemies = Asteroide()
     
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))

@@ -5,7 +5,6 @@ FPS = 60
 
 
 class Nave(pg.sprite.Sprite):
-
     speed = 10
     lives = 3
 
@@ -14,7 +13,7 @@ class Nave(pg.sprite.Sprite):
         self.y = y
         pg.sprite.Sprite.__init__(self)
 
-        self.image = pg.image.load('resources/spaceship.png').convert_alpha()
+        self.image = pg.image.load('resources/image/spaceship.png').convert_alpha()
         
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -25,3 +24,14 @@ class Nave(pg.sprite.Sprite):
        self.rect.y = max(0, self.rect.y - self.speed)
     def go_down(self):
         self.rect.y = min(600- self.h, self.rect.y + self.speed)
+
+'''
+class Asteroide(pg.sprite.Sprite):
+    speed = 10
+    def __init__(self, x, y): 
+        self.w = 350/8
+        self.h = 137/3
+
+        pg.sprite.Sprite.__init__(self)
+
+'''
