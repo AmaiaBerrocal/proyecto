@@ -12,10 +12,10 @@ class InicioPantalla():
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
         
         self.font_texto = pg.font.Font('resources/fonts/PressStart2P.ttf', 50)
-        self.texto = self.font_texto.render("LA BÚSQUEDA", True, (100,100,100))
+        self.texto = self.font_texto.render("LA BÚSQUEDA", True, (WHITE))
 
         self.font_texto_start = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
-        self.texto_start = self.font_texto_start.render("Empezar <espacio>", True, (100,100,100))
+        self.texto_start = self.font_texto_start.render("Empezar <espacio>", True, (WHITE))
 
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
         
@@ -23,10 +23,11 @@ class InicioPantalla():
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))
     
-        screen.blit(self.texto, (100, 300))
+        screen.blit(self.texto, (120, 200))
         screen.blit(self.texto_start, (400, 550))
 
     def handleEvents(self, event):
+       
         for ev in event.get():
             if ev.type == QUIT:
                 pg.quit()
@@ -34,26 +35,45 @@ class InicioPantalla():
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
                     print("Paso a HistoriaPantalla")
-
+       
 
 class HistoriaPantalla():
     def __init__(self):
+
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
-        
-        self.font_historia = pg.font.Font('resources/fonts/PressStart2P.ttf', 28)
-        self.historia = self.font_historia.render("historia", True, (100,100,100))
+       
+        self.alto_linea = 25
+        self.margen = 6 
+        self.font_historia = pg.font.Font('resources/fonts/PressStart2P.ttf', self.alto_linea)   
         
         self.font_saltar_intro = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
-        self.saltar_intro = self.font_saltar_intro.render("Saltar intro <espacio>", True, (100,100,100))
+        self.saltar_intro = self.font_saltar_intro.render("Saltar intro <espacio>", True, (WHITE))
 
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
         
 
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))
+        screen.blit(self.saltar_intro, (300, 550))
         
-        screen.blit(self.historia, (100, 300))
-        screen.blit(self.saltar_intro, (250, 550))
+        texto = ["Año 2051. Tras siglos de", 
+                 "expolio, el planeta Tierra",
+                 "ya no puede proporcionar", 
+                 "el hogar que antaño fue",
+                 "para los seres humanos.", 
+                 "El fin se aproxima, y un grupo",
+                 "de valientes voluntarias,",
+                 "bajo el mando de la capitana",
+                 "Zur, emprenden la arriesgada",
+                 "misión de encontrar un",
+                 "nuevo hogar para la humanidad."]
+        
+        y = 100
+        for linea in texto:
+            linea_pygame = self.font_historia.render(linea, True, (WHITE))
+            screen.blit(linea_pygame, (50, y))
+            y += self.alto_linea + self.margen
+              
 
     def handleEvents(self, event):
         for ev in event.get():
@@ -85,20 +105,20 @@ class JuegoPantalla:
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))
         screen.blit(self.marcadorP, (550, 20))
-        screen.blit(self.puntos, (700, 20)) #igual tengo que poner la y más cerca del borde
+        screen.blit(self.puntos, (700, 20)) #igual tengo que ponerla y más cerca del borde
         screen.blit(self.marcadorV, (550, 40))
         screen.blit(self.vidas, (700, 40))
         screen.blit(self.player.image, self.player.rect)
 
     def handleEvents(self, event):
-        for event in event.get():
-            if event.type == QUIT:
+        for ev in event.get():
+            if ev.type == QUIT:
                 pg.quit()
                 sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_UP:
+            if ev.type == KEYDOWN:
+                if ev.key == K_UP:
                     self.player.go_up()
-                if event.key == K_DOWN:
+                if ev.key == K_DOWN:
                     self.player.go_down()
 
         keys_pressed = pg.key.get_pressed()

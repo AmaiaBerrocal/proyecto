@@ -6,8 +6,6 @@ from entities import *
 from pantallas import *
 
 FPS = 60
-WHITE = (255, 255, 255)
-YELLOW = (255, 255, 0)
 
 
 class Game:
@@ -16,7 +14,7 @@ class Game:
     def __init__(self):
         self.screen = pg.display.set_mode((800,600))
         pg.display.set_caption("La búsqueda")
-        self.pantallaActiva = JuegoPantalla()
+        self.pantallaActiva = HistoriaPantalla()
                     
     def mainloop(self):
         while True:
