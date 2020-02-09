@@ -7,7 +7,7 @@ from entities import *
 FPS = 60
 WHITE = (255, 255, 255)
 
-class InicioPantalla():
+class InicioPantalla:
     def __init__(self):
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
         
@@ -40,7 +40,7 @@ class InicioPantalla():
         pass
        
 
-class HistoriaPantalla():
+class HistoriaPantalla:
     def __init__(self):
 
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
@@ -93,7 +93,7 @@ class HistoriaPantalla():
     
 
 class JuegoPantalla:
-    def __init__(self):
+    def __init__(self, creation_time=60):
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
       
         self.font_puntos = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
@@ -103,11 +103,18 @@ class JuegoPantalla:
         self.marcadorV = self.font_vidas.render("Vidas:", True, WHITE)
         self.vidas = self.font_vidas.render("0", True, WHITE)
         
+        self.score = 0
+
+        self.current_time = 0
+        self.creation_time = creation_time
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
 
         self.player = Nave()
-        self.enemies = Asteroide(820, 500)
+        self.enemies = []
     
+    def random_y(self):
+        return random.randint(0,600)
+        
     def handleEvents(self, event):
         for ev in event.get():
             if ev.type == QUIT:
@@ -124,9 +131,29 @@ class JuegoPantalla:
             self.player.go_up()
         if keys_pressed[K_DOWN]:
             self.player.go_down()  
-                     
-    def update(self, dt):
-        self.enemies.update(dt)
+    
+    def create_asteriod(self):
+        self.current_time += 1
+        if self.current_time >= self.creation_time:
+            self.enemies.append(Asteroide(820, self.random_y()))
+            self.current_time = 0
+    
+    def test_collisions(self, borra=False):
+        for enemy in self.enemies:
+            if self.player.rect.colliderect(enemy):
+                self.enemies.remove(enemy)
+
+        
+    def update(self, dt):       
+        self.score += 1
+        self.puntos = self.font_puntos.render(str(self.score), True, WHITE)
+        self.create_asteriod()
+        self.test_collisions()
+        for enemy in self.enemies:
+            if enemy.rect.x < -40:
+                self.enemies.remove(enemy)
+            enemy.update(dt)
+        
 
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))
@@ -135,7 +162,9 @@ class JuegoPantalla:
         screen.blit(self.marcadorV, (550, 40))
         screen.blit(self.vidas, (700, 40))
         screen.blit(self.player.image, self.player.rect)
-        screen.blit(self.enemies.image, self.enemies.rect)
+        
+        for enemy in self.enemies:
+            screen.blit(enemy.image, enemy.rect)
 
 
 
