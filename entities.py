@@ -28,6 +28,9 @@ class Nave(pg.sprite.Sprite):
     def go_down(self):
         self.rect.y = min(600- self.h, self.rect.y + self.speed)
 
+    def update(self, dt):
+        pass
+
 class Asteroide(pg.sprite.Sprite):  
     def __init__(self, x, y): 
         self.speed = 5
@@ -92,4 +95,50 @@ class Asteroide(pg.sprite.Sprite):
 
             self.rect.x -= self.speed
 
+class Explosion(pg.sprite.Sprite):
+    def __init__(self, x, y): 
+        self.rows = 4
+        self.columns = 4
+        self.w = 256/4
+        self.h = 256/4
 
+        pg.sprite.Sprite.__init__(self)
+        
+        self.image = pg.Surface((self.w, self.h), pg.SRCALPHA, 32)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.frames = []
+        self.index = 0
+        self.how_many = 0
+        self.animation_time = FPS
+        
+        self.loadFrames()
+        self.current_time = 0
+
+    def loadFrames(self):
+        sprite_sheet = pg.image.load('resources/image/explosion.png').convert_alpha()
+        for fila in range(self.rows):
+            y = fila * self.h
+            for column in range(self.columns):
+                x = column * self.w
+
+                image = pg.Surface((self.w, self.h), pg.SRCALPHA).convert_alpha()
+                image.blit(sprite_sheet, (0,0), (x, y, self.w, self.h))
+
+                self.frames.append(image)
+
+        self.how_many = len(self.frames)
+        self.image = self.frames[self.index]
+  
+    def update(self, dt):
+        self.current_time += dt
+
+        if self.current_time > self.animation_time:
+            self.current_time = 0
+            self.index +=1
+
+            if self.index >= self.how_many:
+                self.index = 0
+        
+            self.image = self.frames[self.index]

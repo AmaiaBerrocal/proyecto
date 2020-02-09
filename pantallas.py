@@ -141,18 +141,22 @@ class JuegoPantalla:
     def test_collisions(self, borra=False):
         for enemy in self.enemies:
             if self.player.rect.colliderect(enemy):
-                self.enemies.remove(enemy)
+                self.player = Explosion(self.player.rect.x, self.player.rect.y)
 
         
     def update(self, dt):       
         self.score += 1
         self.puntos = self.font_puntos.render(str(self.score), True, WHITE)
+        
         self.create_asteriod()
+        
         self.test_collisions()
+        
         for enemy in self.enemies:
             if enemy.rect.x < -40:
                 self.enemies.remove(enemy)
             enemy.update(dt)
+        self.player.update(dt)
         
 
     def draw(self, screen):
