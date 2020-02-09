@@ -35,6 +35,9 @@ class InicioPantalla():
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
                     print("Paso a HistoriaPantalla")
+
+    def update(self):
+        pass
        
 
 class HistoriaPantalla():
@@ -85,6 +88,9 @@ class HistoriaPantalla():
                     print("Paso a JuegoPantalla")
                     pantantallaActiva = InicioPantalla()
 
+    def update(self):
+        pass
+    
 
 class JuegoPantalla:
     def __init__(self):
@@ -100,16 +106,8 @@ class JuegoPantalla:
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
 
         self.player = Nave()
-        #self.enemies = Asteroide()
+        self.enemies = Asteroide(300, 800)
     
-    def draw(self, screen):
-        screen.blit(self.background_img, (0, 0))
-        screen.blit(self.marcadorP, (550, 20))
-        screen.blit(self.puntos, (700, 20)) #igual tengo que ponerla y más cerca del borde
-        screen.blit(self.marcadorV, (550, 40))
-        screen.blit(self.vidas, (700, 40))
-        screen.blit(self.player.image, self.player.rect)
-
     def handleEvents(self, event):
         for ev in event.get():
             if ev.type == QUIT:
@@ -127,7 +125,21 @@ class JuegoPantalla:
         if keys_pressed[K_DOWN]:
             self.player.go_down()  
                      
-    
+    def update(self, dt):
+        self.enemies.update(dt)
+
+    def draw(self, screen):
+        screen.blit(self.background_img, (0, 0))
+        screen.blit(self.marcadorP, (550, 20))
+        screen.blit(self.puntos, (700, 20)) 
+        screen.blit(self.marcadorV, (550, 40))
+        screen.blit(self.vidas, (700, 40))
+        screen.blit(self.player.image, self.player.rect)
+        screen.blit(self.enemies.image, self.enemies.rect)
+
+
+
+
 class ScorePantalla:
     def __init__(self):
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
@@ -154,7 +166,10 @@ class ScorePantalla:
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
                     print("Paso a InicioPantalla")
-                    
+
+    def update(self):
+        pass
+                  
 
 
 

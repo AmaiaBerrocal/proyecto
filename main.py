@@ -14,14 +14,16 @@ class Game:
     def __init__(self):
         self.screen = pg.display.set_mode((800,600))
         pg.display.set_caption("La búsqueda")
-        self.pantallaActiva = HistoriaPantalla()
+        self.pantallaActiva = JuegoPantalla()
                     
     def mainloop(self):
         while True:
             dt = self.clock.tick(FPS)
             
-            self.pantallaActiva.draw(self.screen)
             self.pantallaActiva.handleEvents(pg.event)
+            self.pantallaActiva.update(dt)
+            self.pantallaActiva.draw(self.screen)
+            
             
             pg.display.flip()
     
