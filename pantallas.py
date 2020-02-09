@@ -106,7 +106,7 @@ class JuegoPantalla:
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
 
         self.player = Nave()
-        self.enemies = Asteroide(300, 800)
+        self.enemies = Asteroide(820, 500)
     
     def handleEvents(self, event):
         for ev in event.get():

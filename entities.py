@@ -1,6 +1,6 @@
 import pygame as pg
 from pygame.locals import *
-
+import random
 
 FPS = 60
 
@@ -32,8 +32,12 @@ class Asteroide(pg.sprite.Sprite):
     def __init__(self, x, y): 
         self.speed = 5
         
-        self.w = 350/8
-        self.h = 137/3
+        image_random = self.random_image() 
+        self.file_name = image_random[0]
+        self.rows = image_random[2]
+        self.columns = image_random[1]
+        self.w = image_random[3]/image_random[1]
+        self.h = image_random[4]/image_random[2]
 
         pg.sprite.Sprite.__init__(self)
         
@@ -49,11 +53,21 @@ class Asteroide(pg.sprite.Sprite):
         self.loadFrames()
         self.current_time = 0
 
+    def random_image(self):
+        pictures = [['asteroidesGrande.png', 8, 3, 350, 137],
+         ['asteroidesMedio.png', 8, 2, 261, 77], 
+         ['asteroidesMini.png', 8, 2, 149, 36]]
+        
+        image_random = random.randint(0,2)
+        
+        return pictures[image_random]
+
+
     def loadFrames(self):
-        sprite_sheet = pg.image.load('resources/image/asteroides/asteroidesGrande.png').convert_alpha()
-        for fila in range(3):
+        sprite_sheet = pg.image.load('resources/image/asteroides/' + self.file_name).convert_alpha()
+        for fila in range(self.rows):
             y = fila * self.h
-            for column in range(8):
+            for column in range(self.columns):
                 x = column * self.w
 
                 image = pg.Surface((self.w, self.h), pg.SRCALPHA).convert_alpha()
@@ -77,6 +91,5 @@ class Asteroide(pg.sprite.Sprite):
             self.image = self.frames[self.index]
 
             self.rect.x -= self.speed
-            
 
 
