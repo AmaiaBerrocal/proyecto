@@ -1,6 +1,7 @@
 import pygame as pg
 from pygame.locals import *
 import sys
+import sqlite3
 
 from entities import *
 
@@ -142,6 +143,7 @@ class JuegoPantalla:
         for enemy in self.enemies:
             if self.player.rect.colliderect(enemy):
                 self.player = Explosion(self.player.rect.x, self.player.rect.y)
+                #TODO: sonido explosion
 
         
     def update(self, dt):       
@@ -171,25 +173,49 @@ class JuegoPantalla:
             screen.blit(enemy.image, enemy.rect)
 
 
-
-
 class ScorePantalla:
     def __init__(self):
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
         
         self.font_puntuacion = pg.font.Font('resources/fonts/PressStart2P.ttf', 28)
-        self.puntuacion = self.font_puntuacion.render("Puntuación", True, (100,100,100))
+        self.puntuacion = self.font_puntuacion.render("Puntuación", True, (WHITE))
         
         self.font_texto_salir = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
-        self.texto_salir = self.font_texto_salir.render("Salir <espacio>", True, (100,100,100))
+        self.texto_salir = self.font_texto_salir.render("Salir <espacio>", True, (WHITE))
 
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
+        
+        self.alto_linea = 25
+        self.margen = 6 
+        self.scores = []
+        self.read_database()
+        
+
+    def read_database(self):
+        conn = sqlite3.connect('data/database.db')
+        cursor = conn.cursor()
+
+        rows = cursor.execute('SELECT * from score;')
+        self.scores = []
+        for row in rows:
+            self.scores.append(row)
+            
+        conn.commit()
+        conn.close()     
+        
 
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))
         
-        screen.blit(self.puntuacion, (100, 300))
+        screen.blit(self.puntuacion, (100, 100))
         screen.blit(self.texto_salir, (250, 550))
+        
+        y = 150
+        for row in self.scores:
+            row_scores = self.font_puntuacion.render(row[0]+'-'+str(row[1]), True, (WHITE))
+            screen.blit(row_scores, (50, y))
+            y += self.alto_linea + self.margen     
+
 
     def handleEvents(self, event):
         for ev in event.get():
@@ -200,7 +226,7 @@ class ScorePantalla:
                 if ev.key == K_SPACE:
                     print("Paso a InicioPantalla")
 
-    def update(self):
+    def update(self, dt):
         pass
                   
 
