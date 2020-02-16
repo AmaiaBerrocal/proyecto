@@ -5,34 +5,28 @@ import sys
 from entities import *
 from pantallas import *
 
-FPS = 60
-
+FPS = 60 #el mainloop se ejecuta 60 veces por segundo
 
 class Game:
-    clock = pg.time.Clock()
+    clock = pg.time.Clock() 
 
     def __init__(self):
-        self.screen = pg.display.set_mode((800,600))
-        pg.display.set_caption("La búsqueda")
-        self.pantallaActiva = ScorePantalla()
+        self.screen = pg.display.set_mode((800,600)) #creo la pantalla
+        pg.display.set_caption("La búsqueda") #titulo de pantalla
+        self.pantallaActiva = JuegoPantalla() #pantalla que se esta dibujando (tengo que gestionar el cambio)
                     
-    def mainloop(self):
+    def mainloop(self): #bucle principal del juego
         while True:
-            dt = self.clock.tick(FPS)
+            dt = self.clock.tick(FPS) #se asegura de que haya pasado el tiempo que queremos y sino espera
             
-            self.pantallaActiva.handleEvents(pg.event)
-            self.pantallaActiva.update(dt)
-            self.pantallaActiva.draw(self.screen)
+            self.pantallaActiva.handleEvents(pg.event) #los eventos los maneja la pantalla activa porque son diferentes en cada una
+            self.pantallaActiva.update(dt) #actualiza la pantalla
+            self.pantallaActiva.draw(self.screen) #pinta la pantalla
             
-            
-            pg.display.flip()
+            pg.display.flip() #muestra la pantalla
     
 
 if __name__ == '__main__':
-    pg.init() 
-    game = Game()
-    game.mainloop()
-
-
-
-
+    pg.init() #inicio pygame
+    game = Game() #instancio mi clase juego
+    game.mainloop() #ejecuto el mainloop de mi instacia
