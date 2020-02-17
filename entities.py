@@ -34,6 +34,7 @@ class Nave(pg.sprite.Sprite):
     def end_animacion(self): #indica el numero de frames que faltan para tenimar la animacion. Aqui no hay animación pero hay que retornar un numero mayor de 0
         return 7 #no me gusta nada. quiero cambiarlo
 
+
 class Asteroide(pg.sprite.Sprite):  
     def __init__(self, x, y): 
         self.speed = 5
@@ -99,6 +100,7 @@ class Asteroide(pg.sprite.Sprite):
 
             self.rect.x -= self.speed #hace que se muevan de dcha a izq
 
+
 class Explosion(pg.sprite.Sprite):
     def __init__(self, x, y): 
         self.rows = 4 #como solo tengo una imagen, meto los datos a mano
@@ -144,5 +146,5 @@ class Explosion(pg.sprite.Sprite):
             #aqui, cuando acabo la lista, no vulevo a la primera imagen porque quiero que la animacion termine
             self.image = self.frames[self.index]
 
-    def end_animacion(self): #me dice el numero de frames que faltan ara que acabe la animacion. Lo necesito para saber cuando tengo que dibujar una nueva nave.
+    def end_animacion(self): #me dice el numero de frames que faltan para que acabe la animacion. Lo necesito para saber cuando tengo que dibujar una nueva nave.
         return self.how_many - self.index #frames totales - frame en el que estoy

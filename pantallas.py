@@ -94,11 +94,11 @@ class HistoriaPantalla: #todo igual que InicioPantalla
     
 
 class JuegoPantalla(pg.sprite.Sprite):
-    def __init__(self, creation_time=60):
+    def __init__(self): 
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
         
         self.score = 0
-        self.lives = 3
+        self.lives = 1
 
         self.font_puntos = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
         self.marcadorP = self.font_puntos.render("Puntos:", True, WHITE)
@@ -108,26 +108,34 @@ class JuegoPantalla(pg.sprite.Sprite):
         self.vidas = self.font_vidas.render(str(self.lives), True, WHITE)
         self.font_gameover = pg.font.Font('resources/fonts/PressStart2P.ttf', 40)
         self.gameover = self.font_gameover.render("GAME OVER", True, YELLOW)
+        self.font_continuar = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
+        self.continuar = self.font_continuar.render("Continuar <espacio>", True, WHITE)
 
-        self.current_time = 0
-        self.creation_time = creation_time
+        self.current_time = 0 #tiempo que ha pasado desde que se creo el ultimo asteroide
+        self.vNivel = 1 #lo usaré para aumentar la velocidad en los niveles
+        self.creation_time = FPS*self.vNivel#tiempo que tarda en crear un asteroide
+        
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
         
-        self.player_group = pg.sprite.Group()
+        self.player_group = pg.sprite.Group() #creo los grupos
         self.enemies_group = pg.sprite.Group()
         self.explosion_group = pg.sprite.Group()
         
-        self.nave = Nave()
-        self.player_group.add(self.nave)
-            
-    def random_y(self):
-        return random.randint(0,600)
+        self.nave = Nave() #instancio la nave
+        self.player_group.add(self.nave) #la meto en el grupo
+        #la explosion y los asteroides no los instancio aqui porque los creo mas adelante
         
     def handleEvents(self, event):
         for ev in event.get():
             if ev.type == QUIT:
                 pg.quit()
                 sys.exit()
+            
+            if ev.type == KEYDOWN:
+                if ev.key == K_SPACE:
+                    if self.lives == 0:
+                        print("Continuar Paso a score")      
+            
             if ev.type == KEYDOWN:
                 if ev.key == K_UP:
                     self.nave.go_up()
@@ -140,49 +148,47 @@ class JuegoPantalla(pg.sprite.Sprite):
         if keys_pressed[K_DOWN]:
             self.nave.go_down()  
     
-    def create_asteriod(self):
-        self.current_time += 1
-        if self.current_time >= self.creation_time:
-            self.enemies_group.add(Asteroide(820, self.random_y()))
-            self.current_time = 0
-    
-    def gameOver(self):
-        self.nave = None
-
-    def test_collisions(self):
-        if self.nave == None:
-            return
-        colisiones = self.nave.test_collisions(self.enemies_group)
-        for b in colisiones:
-            self.lives -= 1
-            self.vidas = self.font_vidas.render(str(self.lives), True, WHITE)
-            self.enemies_group.empty()
-            self.player_group.empty()
-            self.explosion_group.add(Explosion(self.nave.rect.x,self.nave.rect.y))
-
-        if self.lives == 0:
-            self.gameOver()
-        
     def update(self, dt):   
-        if self.lives > 0:    
+        if self.lives > 0:   #si las vidas > 0 sumo puntos 
             self.score += 1
             self.puntos = self.font_puntos.render(str(self.score), True, WHITE)
             self.test_collisions()
         
-        self.create_asteriod()          
+        self.create_asteriod()  #creo asteroides y los meto en enemies_group
         
-        for enemy in self.enemies_group:
-            if enemy.rect.x < -40:
+        for enemy in self.enemies_group: 
+            if enemy.rect.x < -40: #si el asteroide de la lista llega a la x-40(se sale de la pantalla), lo elimino del grupo
                 self.enemies_group.remove(enemy)
-            enemy.update(dt)     
+            else:
+                enemy.update(dt) #actualizo enemigo    
 
-        for item in self.explosion_group:
-            if item.end_animacion() == 1:
-                self.explosion_group.empty()
-                self.player_group.add(self.nave) 
-            item.update(dt)
+        for frame in self.explosion_group: #para cada frame del grupo. Si los frames que quedan para terminar son ==1:
+            if frame.end_animacion() == 1: #si pongo 0 funciona pero dice q se sale de rango, si pongo <1, me pasa igual. si pongo>1 no funciona. Con ==1 va estupendo
+                self.explosion_group.empty() #vacio el grupo explosion 
+                self.player_group.add(self.nave) #meto la nave en su grupo
+            frame.update(dt)
 
+    def test_collisions(self):
+        colisiones = self.nave.test_collisions(self.enemies_group) #meto en colisiones la lista de enemigos con los que ha colisionado la nave
+        for b in colisiones: # si hay colisones (elementos en la lista):
+            self.lives -= 1 #resta una vida
+            self.vidas = self.font_vidas.render(str(self.lives), True, WHITE)
+            self.enemies_group.empty() #vacio el grupo de enemigos
+            self.player_group.empty() #vacio el grupo de player
+            self.explosion_group.add(Explosion(self.nave.rect.x,self.nave.rect.y)) #instancio una explosion y la añado al grupo explosion
 
+        if self.lives == 0: #si las vidas se acaban, vacio el grupo player
+            self.player_group.empty()
+
+    def create_asteriod(self): 
+        self.current_time += 1 #el tiempo desde el ultimo asteroide va aumentendo en 1.
+        if self.current_time == self.creation_time: #cuando llega al tiempo de cereacion(60)
+            self.enemies_group.add(Asteroide(820, self.random_y())) #instancio 1 asteroide y lo meto en su grupo
+            self.current_time = 0 #el tiempo vuelve a empezar
+            
+    def random_y(self): #retorna una posicion 'y' aleatoria en la que crearemos el asteroide
+        return random.randint(0,600)
+    
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))
         screen.blit(self.marcadorP, (550, 20))
@@ -195,8 +201,9 @@ class JuegoPantalla(pg.sprite.Sprite):
         for enemy in self.enemies_group:
             screen.blit(enemy.image, enemy.rect)
 
-        if self.lives <= 0:
+        if self.lives == 0:
             screen.blit(self.gameover, (210, 300))
+            screen.blit(self.continuar, (400, 550))            
         else: 
             self.player_group.draw(screen)
 
@@ -246,7 +253,7 @@ class ScorePantalla:
         screen.blit(self.puntuacion, (250, 100))
         screen.blit(self.texto_salir, (500, 550))
         
-        y = 150 #recorro la base de dato y pinto cada linea
+        y = 150 #recorro la base de datos y pinto cada linea
         for row in self.scores:
             row_scores = self.font_puntuacion.render(row[0]+'-'+str(row[1]), True, (WHITE))
             screen.blit(row_scores, (200, y))
