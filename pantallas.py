@@ -9,6 +9,7 @@ FPS = 60
 WHITE = (255, 255, 255)
 YELLOW = (250, 250, 0)
 
+
 class InicioPantalla:
     def __init__(self):
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert() #cargo el fondo
@@ -36,10 +37,10 @@ class InicioPantalla:
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE: #tengo que gestionarlo
                     print("Paso a HistoriaPantalla")
-                    
+                    #siguiente_pantalla()
     
-    def siguiente_pantalla(self):
-        return HistoriaPantalla()
+    #def siguiente_pantalla(self):
+     #   return HistoriaPantalla()
 
     def update(self, dt): #no hace nada pero si no lo pongo se la pega
         pass
@@ -261,9 +262,40 @@ class JuegoPantalla(pg.sprite.Sprite):
         else: 
             self.player_group.draw(screen)
 
-#class AnimacionPantalla:
 
+class AnimacionPantalla:
+    def __init__(self):
+        self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert() #cargo el fondo
+        
+        self.alto_linea = 25
+        self.margen = 10 
+        self.font_texto = pg.font.Font('resources/fonts/PressStart2P.ttf', 20) #elijo fuente
+        self.texto = self.font_texto.render("", True, (WHITE)) #renderizo texto
 
+        #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
+        
+    def handleEvents(self, event):
+        for ev in event.get():
+            if ev.type == QUIT:
+                pg.quit()
+                sys.exit()
+    
+    def update(self, dt):
+        pass
+
+    def draw(self, screen):
+        screen.blit(self.background_img, (0, 0)) #pinto el fonfo en las coordenadas elegidas
+
+        texto = ["Capitana Zur: Hemos superado la nube",
+                 "              de asteroides.",
+                 "              ¡Podemos aterrizar!"]
+        
+        y = 50
+        for linea in texto: #recorro la lista con el texto y voy pintando cada elemento en una linea
+            linea_pygame = self.font_texto.render(linea, True, (WHITE))
+            screen.blit(linea_pygame, (20, y))
+            y += self.alto_linea + self.margen
+        
 class ScorePantalla:
     def __init__(self):
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()

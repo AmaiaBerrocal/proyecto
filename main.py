@@ -13,7 +13,7 @@ class Game:
     def __init__(self):
         self.screen = pg.display.set_mode((800,600)) #creo la pantalla
         pg.display.set_caption("La búsqueda") #titulo de pantalla
-        self.pantallaActiva = JuegoPantalla() #pantalla que se esta dibujando (tengo que gestionar el cambio)
+        self.pantallaActiva = AnimacionPantalla() #pantalla que se esta dibujando (tengo que gestionar el cambio)
                     
     def mainloop(self): #bucle principal del juego
         while True:
