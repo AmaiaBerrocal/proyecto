@@ -36,8 +36,12 @@ class InicioPantalla:
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE: #tengo que gestionarlo
                     print("Paso a HistoriaPantalla")
+                    
+    
+    def siguiente_pantalla(self):
+        return HistoriaPantalla()
 
-    def update(self): #no hace nada pero si no lo pongo se la pega
+    def update(self, dt): #no hace nada pero si no lo pongo se la pega
         pass
        
 
@@ -65,7 +69,7 @@ class HistoriaPantalla: #todo igual que InicioPantalla
                  "ya no puede proporcionar", 
                  "el hogar que antaño fue",
                  "para los seres humanos.", 
-                 "El fin se aproxima, y un grupo",
+                 "El fin se aproxima y un grupo",
                  "de valientes voluntarias,",
                  "bajo el mando de la capitana",
                  "Zur, emprenden la arriesgada",
@@ -86,12 +90,58 @@ class HistoriaPantalla: #todo igual que InicioPantalla
                 sys.exit()
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
-                    print("Paso a JuegoPantalla")
+                    print("Paso a InstruccionesPantalla")
                     pantantallaActiva = InicioPantalla()
 
-    def update(self):
+    def update(self, dt):
         pass
-    
+
+
+class InstruccionesPantalla:
+    def __init__(self):
+
+        self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
+       
+        self.alto_linea = 25
+        self.margen = 10 
+        self.font_instrucciones = pg.font.Font('resources/fonts/PressStart2P.ttf', self.alto_linea)   
+        
+        self.font_saltar_instr = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
+        self.saltar_instr = self.font_saltar_instr.render("Empezar <espacio>", True, (WHITE))
+
+        #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
+        
+
+    def draw(self, screen):
+        screen.blit(self.background_img, (0, 0))
+        screen.blit(self.saltar_instr, (450, 550))
+        
+        texto = ["Debes evitar colisionar con", 
+                 "los asteroides para alcanzar",
+                 "la superficie del planeta.", 
+                 "Múevete arriba (KEY_UP) y",
+                 "abajo (KEY_DOWN), para ello."]
+        
+        y = 100
+        for linea in texto: #recorro la lista con el texto y voy pintando cada elemento en una linea
+            linea_pygame = self.font_instrucciones.render(linea, True, (WHITE))
+            screen.blit(linea_pygame, (50, y))
+            y += self.alto_linea + self.margen
+              
+
+    def handleEvents(self, event):
+        for ev in event.get():
+            if ev.type == QUIT:
+                pg.quit()
+                sys.exit()
+            if ev.type == KEYDOWN:
+                if ev.key == K_SPACE:
+                    print("Paso a JuegoPantalla")
+                    
+
+    def update(self, dt):
+        pass
+
 
 class JuegoPantalla(pg.sprite.Sprite):
     def __init__(self): 
@@ -112,9 +162,9 @@ class JuegoPantalla(pg.sprite.Sprite):
         self.continuar = self.font_continuar.render("Continuar <espacio>", True, WHITE)
 
         self.current_time = 0 #tiempo que ha pasado desde que se creo el ultimo asteroide
-        self.vNivel = 1 #lo usaré para aumentar la velocidad en los niveles
-        self.creation_time = FPS*self.vNivel#tiempo que tarda en crear un asteroide
-        
+        self.velocidad_nivel = 1 #lo usaré para aumentar la velocidad en los niveles
+        self.creation_time = FPS//self.velocidad_nivel#tiempo que tarda en crear un asteroide
+        self.level_time = 0 #contador para calcular el timpo que dura la pantalla para cambiar de nivel
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
         
         self.player_group = pg.sprite.Group() #creo los grupos
@@ -148,8 +198,8 @@ class JuegoPantalla(pg.sprite.Sprite):
         if keys_pressed[K_DOWN]:
             self.nave.go_down()  
     
-    def update(self, dt):   
-        if self.lives > 0:   #si las vidas > 0 sumo puntos 
+    def update(self, dt):     
+        if self.lives > 0 and self.level_time < 3600:#si las vidas > 0 sumo puntos y la duración del juego menor a 1 min
             self.score += 1
             self.puntos = self.font_puntos.render(str(self.score), True, WHITE)
             self.test_collisions()
@@ -163,10 +213,14 @@ class JuegoPantalla(pg.sprite.Sprite):
                 enemy.update(dt) #actualizo enemigo    
 
         for frame in self.explosion_group: #para cada frame del grupo. Si los frames que quedan para terminar son ==1:
-            if frame.end_animacion() == 1: #si pongo 0 funciona pero dice q se sale de rango, si pongo <1, me pasa igual. si pongo>1 no funciona. Con ==1 va estupendo
+            if frame.end_animacion() == 1: #si estoy en el ultimo frame de la animacion (16-15=1)
                 self.explosion_group.empty() #vacio el grupo explosion 
                 self.player_group.add(self.nave) #meto la nave en su grupo
             frame.update(dt)
+        
+        self.level_time += 1
+        if self.level_time == 3600: #1min(60seg*60vpseg)
+            print("paso a la pantalla de la animación")   
 
     def test_collisions(self):
         colisiones = self.nave.test_collisions(self.enemies_group) #meto en colisiones la lista de enemigos con los que ha colisionado la nave
@@ -206,6 +260,8 @@ class JuegoPantalla(pg.sprite.Sprite):
             screen.blit(self.continuar, (400, 550))            
         else: 
             self.player_group.draw(screen)
+
+#class AnimacionPantalla:
 
 
 class ScorePantalla:

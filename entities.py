@@ -31,9 +31,6 @@ class Nave(pg.sprite.Sprite):
     def update(self, dt): #no hace nada pero he tenido que crearla para que el mainloop no se la pegue
         pass
 
-    def end_animacion(self): #indica el numero de frames que faltan para tenimar la animacion. Aqui no hay animación pero hay que retornar un numero mayor de 0
-        return 7 #no me gusta nada. quiero cambiarlo
-
 
 class Asteroide(pg.sprite.Sprite):  
     def __init__(self, x, y): 
@@ -79,7 +76,7 @@ class Asteroide(pg.sprite.Sprite):
                 x = column * self.w
 
                 image = pg.Surface((self.w, self.h), pg.SRCALPHA).convert_alpha()
-                image.blit(sprite_sheet, (0,0), (x, y, self.w, self.h)) #no entiendo este blit, pero sin el, no funciona
+                image.blit(sprite_sheet, (0,0), (x, y, self.w, self.h)) #cogido de ejercicio de clase. no entiendo este blit, pero sin el, no funciona
 
                 self.frames.append(image) #las mete en la lista
 
@@ -87,13 +84,13 @@ class Asteroide(pg.sprite.Sprite):
         self.image = self.frames[self.index] #actualiza self.image
   
     def update(self, dt): #animamos los asteroides
-        self.current_time += dt #no lo entiendo
+        self.current_time += dt #no lo entiendo este dt. no le doy valor en ningun sitio¿?
 
         if self.current_time > self.animation_time:
             self.current_time = 0
             self.index +=1
 
-            if self.index >= self.how_many: #cuando se llega a la ultima imagen, vulve a la primera
+            if self.index >= self.how_many: #cuando se llega a la ultima imagen, vuelve a la primera
                 self.index = 0
         
             self.image = self.frames[self.index]
@@ -138,7 +135,7 @@ class Explosion(pg.sprite.Sprite):
         self.image = self.frames[self.index]
   
     def update(self, dt):
-        self.current_time += dt #no lo entiendo
+        self.current_time += dt #no lo entiendo, donde asigno valor a dt¿?
 
         if self.current_time > self.animation_time:
             self.current_time = 0
@@ -147,4 +144,4 @@ class Explosion(pg.sprite.Sprite):
             self.image = self.frames[self.index]
 
     def end_animacion(self): #me dice el numero de frames que faltan para que acabe la animacion. Lo necesito para saber cuando tengo que dibujar una nueva nave.
-        return self.how_many - self.index #frames totales - frame en el que estoy
+        return self.how_many - self.index #frames totales(en este caso 16) - indice del frame en el que estoy(0-15)
