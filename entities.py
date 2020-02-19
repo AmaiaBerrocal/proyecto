@@ -84,7 +84,7 @@ class Asteroide(pg.sprite.Sprite):
         self.image = self.frames[self.index] #actualiza self.image
   
     def update(self, dt): #animamos los asteroides
-        self.current_time += dt #no lo entiendo este dt. no le doy valor en ningun sitio¿?
+        self.current_time += dt #LE ASIGNO VALOR EN LA LINEA 20 DEL MAIN!!!!!
 
         if self.current_time > self.animation_time:
             self.current_time = 0
@@ -135,7 +135,7 @@ class Explosion(pg.sprite.Sprite):
         self.image = self.frames[self.index]
   
     def update(self, dt):
-        self.current_time += dt #no lo entiendo, donde asigno valor a dt¿?
+        self.current_time += dt #LE ASIGNO EL VALOR EN LA LINEA 20 DEL MAIN!!!!
 
         if self.current_time > self.animation_time:
             self.current_time = 0

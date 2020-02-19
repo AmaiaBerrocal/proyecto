@@ -272,6 +272,15 @@ class AnimacionPantalla:
         self.font_texto = pg.font.Font('resources/fonts/PressStart2P.ttf', 20) #elijo fuente
         self.texto = self.font_texto.render("", True, (WHITE)) #renderizo texto
 
+        self.planeta = None
+        self.planet_color = (173, 216, 230)
+        self.planet_position = (1200, 300) 
+        self.planet_radius = 400
+        self.planet_w = 0
+
+        
+
+        
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
         
     def handleEvents(self, event):
@@ -281,7 +290,14 @@ class AnimacionPantalla:
                 sys.exit()
     
     def update(self, dt):
-        pass
+        if self.planet_position[0] >= 1100:
+            self.planet_position = (self.planet_position[0]-1, self.planet_position[1])
+
+        
+    # hacer un circulo con el metodo pygame.draw.circle que se mueva en el eje x hacia la izq
+    #la nave se mueve en eje x hacia dcha hasta llega al circulo
+    #voltear nave
+    #paso a sig nivel
 
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0)) #pinto el fonfo en las coordenadas elegidas
@@ -295,6 +311,9 @@ class AnimacionPantalla:
             linea_pygame = self.font_texto.render(linea, True, (WHITE))
             screen.blit(linea_pygame, (20, y))
             y += self.alto_linea + self.margen
+
+        self.planeta = pg.draw.circle(screen, self.planet_color, self.planet_position, self.planet_radius, self.planet_w)
+        
         
 class ScorePantalla:
     def __init__(self):
