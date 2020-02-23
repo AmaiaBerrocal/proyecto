@@ -5,7 +5,7 @@
 1. Crear, si se desea, un entorno virtual y activarlo:
 
 ```
-python3 -m venv <nombre_del_entorno>
+python -m venv <nombre_del_entorno>
 source <nombre_del_entorno>/bin/activate
 ```
 
@@ -24,6 +24,7 @@ Después:
 
 ```
 .read score_table.sql
+.quit
 ```
 
 4. Lanzar la aplicación

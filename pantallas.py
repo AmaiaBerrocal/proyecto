@@ -145,7 +145,7 @@ class JuegoPantalla(pg.sprite.Sprite):
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
         
         self.score = score
-        self.lives = 1
+        self.lives = 3
 
         self.font = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
         self.marcadorP = self.font.render("Puntos:", True, WHITE)
@@ -218,7 +218,7 @@ class JuegoPantalla(pg.sprite.Sprite):
             frame.update(dt)
         
         self.level_time += 1
-        if self.level_time == 3600: #1min(60seg*60vpseg) 
+        if self.level_time == 3600 and self.lives > 0: #1min(60seg*60vpseg) 
             self.change_screen = True
             self.next_screen = AnimacionPantalla(self.nivel, self.score)
 
