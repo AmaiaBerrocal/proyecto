@@ -15,4 +15,19 @@ source <nombre_del_entorno>/bin/activate
 pip install -r requirements.txt
 ```
 
-3. Lanzar la aplicación
+3. Crear base de datos en el directorio data:
+
+```
+sqlite3 data/database.db
+```
+Después: 
+
+```
+.read score_table.sql
+```
+
+4. Lanzar la aplicación
+
+```
+python main.py
+```
