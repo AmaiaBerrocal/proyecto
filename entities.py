@@ -17,7 +17,8 @@ class Nave(pg.sprite.Sprite):
         self.rect = self.image.get_rect() #saco el rectangulo que ocupa la imagen
         self.rect.x = x #asigno la x a ese rectangulo
         self.rect.y = y #asigno la y a ese rectangulo
-        self.h = self.rect.h #calculo la h de ese rectangulo. No necesito la anchura (w)
+        self.h = self.rect.h #calculo la h de ese rectangulo. 
+        self.w = self.rect.w
 
     def go_up(self):
         self.rect.y = max(0, self.rect.y - self.speed)  #mueve hacia arriba la nave y no permite que pase de cero

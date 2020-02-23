@@ -150,12 +150,12 @@ class InstruccionesPantalla:
 
 
 class JuegoPantalla(pg.sprite.Sprite):
-    def __init__(self, nivel=1): 
+    def __init__(self, nivel=1, score=0): 
         self.nivel = nivel
 
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
         
-        self.score = 0
+        self.score = score
         self.lives = 1
 
         self.font_puntos = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
@@ -233,10 +233,10 @@ class JuegoPantalla(pg.sprite.Sprite):
             frame.update(dt)
         
         self.level_time += 1
-        if self.level_time == 3600: #1min(60seg*60vpseg)
+        if self.level_time == 360: #1min(60seg*60vpseg)
             print("paso a la pantalla de la animación")   
             self.change_screen = True
-            self.next_screen = AnimacionPantalla(self.nivel)
+            self.next_screen = AnimacionPantalla(self.nivel, self.score)
 
     def test_collisions(self):
         colisiones = self.nave.test_collisions(self.enemies_group) #meto en colisiones la lista de enemigos con los que ha colisionado la nave
@@ -279,7 +279,7 @@ class JuegoPantalla(pg.sprite.Sprite):
 
 
 class AnimacionPantalla:
-    def __init__(self, nivel_previo):
+    def __init__(self, nivel_previo, score):
         self.nivel_previo = nivel_previo
 
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert() #cargo el fondo
@@ -298,9 +298,10 @@ class AnimacionPantalla:
         self.nave = Nave()
         self.nave.rect.x = 20
         self.nave.rect.y = 300
-        self.angulo_rotacion = 4
+        self.nave_original = self.nave
 
         self.time = 0
+        self.score = score
         
         self.change_screen = False
         self.next_screen = None
@@ -312,27 +313,19 @@ class AnimacionPantalla:
             if ev.type == QUIT:
                 pg.quit()
                 sys.exit()
-    
 
     def update(self, dt):
-        if self.nave.rect.x <= 675:
+        if self.nave.rect.x <= 710 - self.nave.rect.w:
             self.nave.rect.x += 1
-            self.time += 1
-            if self.time > 615 and self.time < 795:
-                self.nave.image = pg.transform.rotate(self.nave.image, self.angulo_rotacion)
-                self.angulo_rotacion -=10
-            
-    
+            if self.time == 500:
+                self.nave.image = pg.transform.rotate(self.nave_original.image, -180)
+               
         if self.planet_position[0] >= 1100:
             self.planet_position = (self.planet_position[0]-1, self.planet_position[1])
         self.time += 1
         if self.time >= 800:
             self.change_screen = True
-            self.next_screen = JuegoPantalla(self.nivel_previo+1)   
-
-    #la nave se mueve en eje x hacia dcha hasta llega al circulo
-    #voltear nave
-    #paso a sig nivel
+            self.next_screen = JuegoPantalla(self.nivel_previo+1, self.score)   
 
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0)) #pinto el fonfo en las coordenadas elegidas
