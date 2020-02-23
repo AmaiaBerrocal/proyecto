@@ -295,6 +295,11 @@ class AnimacionPantalla:
         self.planet_radius = 400
         self.planet_w = 0
 
+        self.nave = Nave()
+        self.nave.rect.x = 20
+        self.nave.rect.y = 300
+        self.angulo_rotacion = 0
+
         self.time = 0
         
         self.change_screen = False
@@ -309,10 +314,19 @@ class AnimacionPantalla:
                 sys.exit()
     
     def update(self, dt):
+        if self.nave.rect.x <= 675:
+            self.nave.rect.x += 1
+            self.time += 1
+            if self.time > 615 and self.time < 795:
+                self.nave.image = pg.transform.rotate(self.nave.image, self.angulo_rotacion)
+                self.angulo_rotacion -=10
+            
+        
+           
         if self.planet_position[0] >= 1100:
             self.planet_position = (self.planet_position[0]-1, self.planet_position[1])
         self.time += 1
-        if self.time >= 600:
+        if self.time >= 800:
             self.change_screen = True
             self.next_screen = JuegoPantalla(self.nivel_previo+1)   
 
@@ -322,6 +336,8 @@ class AnimacionPantalla:
 
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0)) #pinto el fonfo en las coordenadas elegidas
+        
+        screen.blit(self.nave.image, (self.nave.rect.x, self.nave.rect.y))
 
         texto = ["Capitana Zur: Hemos superado la nube",
                  "              de asteroides.",
