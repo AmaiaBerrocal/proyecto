@@ -33,8 +33,8 @@ class Nave(pg.sprite.Sprite):
 
 
 class Asteroide(pg.sprite.Sprite):  
-    def __init__(self, x, y): 
-        self.speed = 5
+    def __init__(self, x, y, speed=5): 
+        self.speed = speed
         
         image_random = self.random_image() #cojo los datos de un archivo aleatorio
         #como cada archivo tiene distinto tamaño, meto los datos con variables

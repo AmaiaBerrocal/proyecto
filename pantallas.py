@@ -20,7 +20,7 @@ class InicioPantalla:
         self.font_texto_start = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
         self.texto_start = self.font_texto_start.render("Empezar <espacio>", True, (WHITE))
 
-        #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
+        #self.music = pg.mixer.Sound('resources/sounds/OutThere.ogg')
         self.change_screen = False
         self.next_screen = None
 
@@ -170,7 +170,7 @@ class JuegoPantalla(pg.sprite.Sprite):
         self.continuar = self.font_continuar.render("Continuar <espacio>", True, WHITE)
 
         self.current_time = 0 #tiempo que ha pasado desde que se creo el ultimo asteroide
-        self.velocidad_nivel = 1 #lo usaré para aumentar la velocidad en los niveles
+        self.velocidad_nivel = 1/2 * self.nivel #lo usaré para aumentar la velocidad en los niveles
         self.creation_time = FPS//self.velocidad_nivel#tiempo que tarda en crear un asteroide
         self.level_time = 0 #contador para calcular el timpo que dura la pantalla para cambiar de nivel
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
@@ -196,7 +196,7 @@ class JuegoPantalla(pg.sprite.Sprite):
                     if self.lives == 0:
                         print("Continuar Paso a score")
                         self.change_screen = True
-                        self.next_screen = ScorePantalla()
+                        self.next_screen = Ranking(self.score)
  
             
             if ev.type == KEYDOWN:
@@ -233,7 +233,7 @@ class JuegoPantalla(pg.sprite.Sprite):
             frame.update(dt)
         
         self.level_time += 1
-        if self.level_time == 360: #1min(60seg*60vpseg)
+        if self.level_time == 3600: #1min(60seg*60vpseg)
             print("paso a la pantalla de la animación")   
             self.change_screen = True
             self.next_screen = AnimacionPantalla(self.nivel)
@@ -253,7 +253,7 @@ class JuegoPantalla(pg.sprite.Sprite):
     def create_asteriod(self): 
         self.current_time += 1 #el tiempo desde el ultimo asteroide va aumentendo en 1.
         if self.current_time == self.creation_time: #cuando llega al tiempo de cereacion(60)
-            self.enemies_group.add(Asteroide(820, self.random_y())) #instancio 1 asteroide y lo meto en su grupo
+            self.enemies_group.add(Asteroide(820, self.random_y(), 5)) #instancio 1 asteroide y lo meto en su grupo
             self.current_time = 0 #el tiempo vuelve a empezar
             
     def random_y(self): #retorna una posicion 'y' aleatoria en la que crearemos el asteroide
@@ -298,7 +298,7 @@ class AnimacionPantalla:
         self.nave = Nave()
         self.nave.rect.x = 20
         self.nave.rect.y = 300
-        self.angulo_rotacion = 0
+        self.angulo_rotacion = 4
 
         self.time = 0
         
@@ -313,6 +313,7 @@ class AnimacionPantalla:
                 pg.quit()
                 sys.exit()
     
+
     def update(self, dt):
         if self.nave.rect.x <= 675:
             self.nave.rect.x += 1
@@ -321,8 +322,7 @@ class AnimacionPantalla:
                 self.nave.image = pg.transform.rotate(self.nave.image, self.angulo_rotacion)
                 self.angulo_rotacion -=10
             
-        
-           
+    
         if self.planet_position[0] >= 1100:
             self.planet_position = (self.planet_position[0]-1, self.planet_position[1])
         self.time += 1
@@ -338,6 +338,7 @@ class AnimacionPantalla:
         screen.blit(self.background_img, (0, 0)) #pinto el fonfo en las coordenadas elegidas
         
         screen.blit(self.nave.image, (self.nave.rect.x, self.nave.rect.y))
+        
 
         texto = ["Capitana Zur: Hemos superado la nube",
                  "              de asteroides.",
@@ -375,23 +376,13 @@ class ScorePantalla:
         conn = sqlite3.connect('data/database.db')
         cursor = conn.cursor()
 
-        rows = cursor.execute('SELECT * from score;')
+        rows = cursor.execute('SELECT name, score FROM score ORDER BY score DESC LIMIT 5;')
         self.scores = []
         for row in rows:
             self.scores.append(row)
             
         conn.commit()
-        conn.close()  
-    '''
-    def write_database(self):
-        conn = sqlite3.connect('data/database.db')
-        cursor = conn.cursor()
-        cursor.execute('INSERT INTO score(name, score) VALUES(?,?)')
-        
-            
-        conn.commit()
-        conn.close()          
-    '''
+        conn.close() 
 
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))
@@ -401,7 +392,7 @@ class ScorePantalla:
         
         y = 150 #recorro la base de datos y pinto cada linea
         for row in self.scores:
-            row_scores = self.font_puntuacion.render(row[0]+'-'+str(row[1]), True, (WHITE))
+            row_scores = self.font_puntuacion.render(row[0]+' - '+str(row[1]), True, (WHITE))
             screen.blit(row_scores, (200, y))
             y += self.alto_linea + self.margen     
 
@@ -420,7 +411,104 @@ class ScorePantalla:
         pass
                   
 
+class Ranking:
+    def __init__(self, score):
+        self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
+        
+        self.font_intro_nombre = pg.font.Font('resources/fonts/PressStart2P.ttf', 28)
+        self.intro_nombre = self.font_intro_nombre.render("Introduce tu nombre:", True, (WHITE))
 
+        self.score = score
+        self.nombre = ""
+        
+        self.change_screen = False
+        self.next_screen = ScorePantalla()
+       
+    
+    def dbWrite(self):
+        conn = sqlite3.connect('data/database.db')
+        cursor = conn.cursor()
 
+        cursor.execute('INSERT INTO score (name, score) VALUES(?, ?);', (self.nombre, self.score))
+        
+        conn.commit()
+        conn.close()
 
+    def handleEvents(self, event):
+        for ev in event.get():
+            if ev.type == QUIT:
+                pg.quit()
+                sys.exit()
+ 
+            if ev.type == KEYDOWN:
+                if ev.key == K_a:
+                    self.nombre += "a"
+                if ev.key == K_b:
+                    self.nombre += "b"
+                if ev.key == K_c:
+                    self.nombre += "c"
+                if ev.key == K_d:
+                    self.nombre += "d"
+                if ev.key == K_e:
+                    self.nombre += "e"
+                if ev.key == K_f:
+                    self.nombre += "f"
+                if ev.key == K_g:
+                    self.nombre += "g"
+                if ev.key == K_h:
+                    self.nombre += "h"
+                if ev.key == K_i:
+                    self.nombre += "i"
+                if ev.key == K_j:
+                    self.nombre += "j"
+                if ev.key == K_k:
+                    self.nombre += "k"
+                if ev.key == K_l:
+                    self.nombre += "l"
+                if ev.key == K_m:
+                    self.nombre += "m"
+                if ev.key == K_n:
+                    self.nombre += "n"
+                if ev.key == K_o:
+                    self.nombre += "o"
+                if ev.key == K_p:
+                    self.nombre += "p"
+                if ev.key == K_q:
+                    self.nombre += "q"
+                if ev.key == K_r:
+                    self.nombre += "r"
+                if ev.key == K_s:
+                    self.nombre += "s"
+                if ev.key == K_t:
+                    self.nombre += "t"
+                if ev.key == K_u:
+                    self.nombre += "u"
+                if ev.key == K_v:
+                    self.nombre += "v"
+                if ev.key == K_w:
+                    self.nombre += "w"
+                if ev.key == K_x:
+                    self.nombre += "x"
+                if ev.key == K_y:
+                    self.nombre += "y"
+                if ev.key == K_z:
+                    self.nombre += "z"
+                if ev.key == K_BACKSPACE:
+                    if len(self.nombre) >= 1:
+                        self.nombre = self.nombre[:-1]
+                if len(self.nombre) >= 3:
+                    self.nombre = self.nombre[:3]
+                    self.dbWrite()
+                    self.change_screen = True
+                    self.next_screen = ScorePantalla()
+                    
 
+    def update(self, dt):
+        pass
+
+    def draw(self, screen):
+        screen.blit(self.background_img, (0, 0))
+        screen.blit(self.intro_nombre, (100, 100))
+        
+        nombre = self.font_intro_nombre.render(self.nombre, True, (WHITE))
+        screen.blit(nombre, (250, 200))
