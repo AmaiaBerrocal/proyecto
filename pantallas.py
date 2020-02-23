@@ -21,7 +21,8 @@ class InicioPantalla:
         self.texto_start = self.font_texto_start.render("Empezar <espacio>", True, (WHITE))
 
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
-        
+        self.change_screen = False
+        self.next_screen = None
 
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0)) #pinto el fonfo en las coordenadas elegidas
@@ -37,10 +38,9 @@ class InicioPantalla:
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE: #tengo que gestionarlo
                     print("Paso a HistoriaPantalla")
-                    #siguiente_pantalla()
-    
-    #def siguiente_pantalla(self):
-     #   return HistoriaPantalla()
+                    self.change_screen = True
+                    self.next_screen = HistoriaPantalla()
+
 
     def update(self, dt): #no hace nada pero si no lo pongo se la pega
         pass
@@ -59,7 +59,8 @@ class HistoriaPantalla: #todo igual que InicioPantalla
         self.saltar_intro = self.font_saltar_intro.render("Saltar intro <espacio>", True, (WHITE))
 
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
-        
+        self.change_screen = False
+        self.next_screen = None
 
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))
@@ -92,7 +93,9 @@ class HistoriaPantalla: #todo igual que InicioPantalla
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
                     print("Paso a InstruccionesPantalla")
-                    pantantallaActiva = InicioPantalla()
+                    self.change_screen = True
+                    self.next_screen = InstruccionesPantalla()
+
 
     def update(self, dt):
         pass
@@ -111,7 +114,8 @@ class InstruccionesPantalla:
         self.saltar_instr = self.font_saltar_instr.render("Empezar <espacio>", True, (WHITE))
 
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
-        
+        self.change_screen = False
+        self.next_screen = None
 
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))
@@ -138,14 +142,17 @@ class InstruccionesPantalla:
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
                     print("Paso a JuegoPantalla")
-                    
+                    self.change_screen = True
+                    self.next_screen = JuegoPantalla()
 
     def update(self, dt):
         pass
 
 
 class JuegoPantalla(pg.sprite.Sprite):
-    def __init__(self): 
+    def __init__(self, nivel=1): 
+        self.nivel = nivel
+
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
         
         self.score = 0
@@ -175,7 +182,9 @@ class JuegoPantalla(pg.sprite.Sprite):
         self.nave = Nave() #instancio la nave
         self.player_group.add(self.nave) #la meto en el grupo
         #la explosion y los asteroides no los instancio aqui porque los creo mas adelante
-        
+        self.change_screen = False
+        self.next_screen = None
+
     def handleEvents(self, event):
         for ev in event.get():
             if ev.type == QUIT:
@@ -185,7 +194,10 @@ class JuegoPantalla(pg.sprite.Sprite):
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
                     if self.lives == 0:
-                        print("Continuar Paso a score")      
+                        print("Continuar Paso a score")
+                        self.change_screen = True
+                        self.next_screen = ScorePantalla()
+ 
             
             if ev.type == KEYDOWN:
                 if ev.key == K_UP:
@@ -199,6 +211,7 @@ class JuegoPantalla(pg.sprite.Sprite):
         if keys_pressed[K_DOWN]:
             self.nave.go_down()  
     
+
     def update(self, dt):     
         if self.lives > 0 and self.level_time < 3600:#si las vidas > 0 sumo puntos y la duración del juego menor a 1 min
             self.score += 1
@@ -220,8 +233,10 @@ class JuegoPantalla(pg.sprite.Sprite):
             frame.update(dt)
         
         self.level_time += 1
-        if self.level_time == 3600: #1min(60seg*60vpseg)
+        if self.level_time == 360: #1min(60seg*60vpseg)
             print("paso a la pantalla de la animación")   
+            self.change_screen = True
+            self.next_screen = AnimacionPantalla(self.nivel)
 
     def test_collisions(self):
         colisiones = self.nave.test_collisions(self.enemies_group) #meto en colisiones la lista de enemigos con los que ha colisionado la nave
@@ -264,7 +279,9 @@ class JuegoPantalla(pg.sprite.Sprite):
 
 
 class AnimacionPantalla:
-    def __init__(self):
+    def __init__(self, nivel_previo):
+        self.nivel_previo = nivel_previo
+
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert() #cargo el fondo
         
         self.alto_linea = 25
@@ -273,14 +290,16 @@ class AnimacionPantalla:
         self.texto = self.font_texto.render("", True, (WHITE)) #renderizo texto
 
         self.planeta = None
-        self.planet_color = (173, 216, 230)
+        self.planet_color = (206, 242, 236)
         self.planet_position = (1200, 300) 
         self.planet_radius = 400
         self.planet_w = 0
 
+        self.time = 0
         
+        self.change_screen = False
+        self.next_screen = None
 
-        
         #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
         
     def handleEvents(self, event):
@@ -292,9 +311,11 @@ class AnimacionPantalla:
     def update(self, dt):
         if self.planet_position[0] >= 1100:
             self.planet_position = (self.planet_position[0]-1, self.planet_position[1])
+        self.time += 1
+        if self.time >= 600:
+            self.change_screen = True
+            self.next_screen = JuegoPantalla(self.nivel_previo+1)   
 
-        
-    # hacer un circulo con el metodo pygame.draw.circle que se mueva en el eje x hacia la izq
     #la nave se mueve en eje x hacia dcha hasta llega al circulo
     #voltear nave
     #paso a sig nivel
@@ -315,7 +336,7 @@ class AnimacionPantalla:
         self.planeta = pg.draw.circle(screen, self.planet_color, self.planet_position, self.planet_radius, self.planet_w)
         
         
-class ScorePantalla:
+class ScorePantalla:  
     def __init__(self):
         self.background_img = pg.image.load('resources/backgrounds/back_space.png').convert()
         
@@ -331,6 +352,8 @@ class ScorePantalla:
         self.margen = 6 
         self.scores = []
         self.read_database() 
+        self.change_screen = False
+        self.next_screen = None
 
     def read_database(self): #leo la base de datos
         conn = sqlite3.connect('data/database.db')
@@ -374,7 +397,9 @@ class ScorePantalla:
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
                     print("Paso a InicioPantalla")
-
+                    self.change_screen = True
+                    self.next_screen = InicioPantalla()
+      
     def update(self, dt):
         pass
                   

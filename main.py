@@ -13,9 +13,11 @@ class Game:
     def __init__(self):
         self.screen = pg.display.set_mode((800,600)) #creo la pantalla
         pg.display.set_caption("La búsqueda") #titulo de pantalla
-        self.pantallaActiva = AnimacionPantalla() #pantalla que se esta dibujando (tengo que gestionar el cambio)
-                    
+       
+        self.pantallaActiva = InicioPantalla()
+
     def mainloop(self): #bucle principal del juego
+        self.pantallaActiva.change_screen = False
         while True:
             dt = self.clock.tick(FPS) #se asegura de que haya pasado el tiempo que queremos y sino espera
             
@@ -24,7 +26,11 @@ class Game:
             self.pantallaActiva.draw(self.screen) #pinta la pantalla
             
             pg.display.flip() #muestra la pantalla
-    
+
+            if self.pantallaActiva.change_screen:
+                self.pantallaActiva = self.pantallaActiva.next_screen
+
+           
 
 if __name__ == '__main__':
     pg.init() #inicio pygame

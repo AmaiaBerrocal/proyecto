@@ -76,7 +76,7 @@ class Asteroide(pg.sprite.Sprite):
                 x = column * self.w
 
                 image = pg.Surface((self.w, self.h), pg.SRCALPHA).convert_alpha()
-                image.blit(sprite_sheet, (0,0), (x, y, self.w, self.h)) #cogido de ejercicio de clase. no entiendo este blit, pero sin el, no funciona
+                image.blit(sprite_sheet, (0,0), (x, y, self.w, self.h)) #cogido de ejercicio de clase.
 
                 self.frames.append(image) #las mete en la lista
 
