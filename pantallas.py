@@ -16,11 +16,9 @@ class InicioPantalla:
         
         self.font_texto = pg.font.Font('resources/fonts/PressStart2P.ttf', 50) #elijo fuente
         self.texto = self.font_texto.render("LA BÚSQUEDA", True, (WHITE)) #renderizo texto
-
         self.font_texto_start = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
-        self.texto_start = self.font_texto_start.render("Empezar <espacio>", True, (WHITE))
+        self.texto_start = self.font_texto_start.render("Empezar <space>", True, (WHITE))
 
-        #self.music = pg.mixer.Sound('resources/sounds/OutThere.ogg')
         self.change_screen = False
         self.next_screen = None
 
@@ -37,10 +35,8 @@ class InicioPantalla:
                 sys.exit()
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE: #tengo que gestionarlo
-                    print("Paso a HistoriaPantalla")
                     self.change_screen = True
                     self.next_screen = HistoriaPantalla()
-
 
     def update(self, dt): #no hace nada pero si no lo pongo se la pega
         pass
@@ -56,9 +52,8 @@ class HistoriaPantalla: #todo igual que InicioPantalla
         self.font_historia = pg.font.Font('resources/fonts/PressStart2P.ttf', self.alto_linea)   
         
         self.font_saltar_intro = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
-        self.saltar_intro = self.font_saltar_intro.render("Saltar intro <espacio>", True, (WHITE))
+        self.saltar_intro = self.font_saltar_intro.render("Saltar intro <space>", True, (WHITE))
 
-        #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
         self.change_screen = False
         self.next_screen = None
 
@@ -84,7 +79,6 @@ class HistoriaPantalla: #todo igual que InicioPantalla
             screen.blit(linea_pygame, (50, y))
             y += self.alto_linea + self.margen
               
-
     def handleEvents(self, event):
         for ev in event.get():
             if ev.type == QUIT:
@@ -92,10 +86,8 @@ class HistoriaPantalla: #todo igual que InicioPantalla
                 sys.exit()
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
-                    print("Paso a InstruccionesPantalla")
                     self.change_screen = True
                     self.next_screen = InstruccionesPantalla()
-
 
     def update(self, dt):
         pass
@@ -111,15 +103,14 @@ class InstruccionesPantalla:
         self.font_instrucciones = pg.font.Font('resources/fonts/PressStart2P.ttf', self.alto_linea)   
         
         self.font_saltar_instr = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
-        self.saltar_instr = self.font_saltar_instr.render("Empezar <espacio>", True, (WHITE))
+        self.saltar_instr = self.font_saltar_instr.render("Empezar <space>", True, (WHITE))
 
-        #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
         self.change_screen = False
         self.next_screen = None
 
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0))
-        screen.blit(self.saltar_instr, (450, 550))
+        screen.blit(self.saltar_instr, (400, 550))
         
         texto = ["Debes evitar colisionar con", 
                  "los asteroides para alcanzar",
@@ -131,8 +122,7 @@ class InstruccionesPantalla:
         for linea in texto: #recorro la lista con el texto y voy pintando cada elemento en una linea
             linea_pygame = self.font_instrucciones.render(linea, True, (WHITE))
             screen.blit(linea_pygame, (50, y))
-            y += self.alto_linea + self.margen
-              
+            y += self.alto_linea + self.margen            
 
     def handleEvents(self, event):
         for ev in event.get():
@@ -141,7 +131,6 @@ class InstruccionesPantalla:
                 sys.exit()
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
-                    print("Paso a JuegoPantalla")
                     self.change_screen = True
                     self.next_screen = JuegoPantalla()
 
@@ -158,24 +147,21 @@ class JuegoPantalla(pg.sprite.Sprite):
         self.score = score
         self.lives = 1
 
-        self.font_puntos = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
-        self.marcadorP = self.font_puntos.render("Puntos:", True, WHITE)
-        self.font_nivel = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
-        self.texto_nivel = self.font_nivel.render("Nivel: " + str(self.nivel), True, WHITE)
-        self.puntos = self.font_puntos.render("0", True, WHITE)
-        self.font_vidas = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
-        self.marcadorV = self.font_vidas.render("Vidas:", True, WHITE)
-        self.vidas = self.font_vidas.render(str(self.lives), True, WHITE)
+        self.font = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
+        self.marcadorP = self.font.render("Puntos:", True, WHITE)
+        self.texto_nivel = self.font.render("Nivel: " + str(self.nivel), True, WHITE)
+        self.puntos = self.font.render("0", True, WHITE)
+        self.continuar = self.font.render("Continuar <space>", True, WHITE)
+        self.marcadorV = self.font.render("Vidas:", True, WHITE)
+        self.vidas = self.font.render(str(self.lives), True, WHITE)
+
         self.font_gameover = pg.font.Font('resources/fonts/PressStart2P.ttf', 40)
         self.gameover = self.font_gameover.render("GAME OVER", True, YELLOW)
-        self.font_continuar = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
-        self.continuar = self.font_continuar.render("Continuar <espacio>", True, WHITE)
-
+    
         self.current_time = 0 #tiempo que ha pasado desde que se creo el ultimo asteroide
         self.velocidad_nivel = 1/2 * self.nivel #lo usaré para aumentar la velocidad en los niveles
         self.creation_time = FPS//self.velocidad_nivel#tiempo que tarda en crear un asteroide
         self.level_time = 0 #contador para calcular el timpo que dura la pantalla para cambiar de nivel
-        #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
         
         self.player_group = pg.sprite.Group() #creo los grupos
         self.enemies_group = pg.sprite.Group()
@@ -196,11 +182,9 @@ class JuegoPantalla(pg.sprite.Sprite):
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
                     if self.lives == 0:
-                        print("Continuar Paso a score")
                         self.change_screen = True
                         self.next_screen = Ranking(self.score)
- 
-            
+  
             if ev.type == KEYDOWN:
                 if ev.key == K_UP:
                     self.nave.go_up()
@@ -212,12 +196,11 @@ class JuegoPantalla(pg.sprite.Sprite):
             self.nave.go_up()
         if keys_pressed[K_DOWN]:
             self.nave.go_down()  
-    
 
     def update(self, dt):     
         if self.lives > 0 and self.level_time < 3600:#si las vidas > 0 sumo puntos y la duración del juego menor a 1 min
             self.score += 1
-            self.puntos = self.font_puntos.render(str(self.score), True, WHITE)
+            self.puntos = self.font.render(str(self.score), True, WHITE)
             self.test_collisions()
         
         self.create_asteriod()  #creo asteroides y los meto en enemies_group
@@ -235,8 +218,7 @@ class JuegoPantalla(pg.sprite.Sprite):
             frame.update(dt)
         
         self.level_time += 1
-        if self.level_time == 3600: #1min(60seg*60vpseg)
-            print("paso a la pantalla de la animación")   
+        if self.level_time == 3600: #1min(60seg*60vpseg) 
             self.change_screen = True
             self.next_screen = AnimacionPantalla(self.nivel, self.score)
 
@@ -244,7 +226,7 @@ class JuegoPantalla(pg.sprite.Sprite):
         colisiones = self.nave.test_collisions(self.enemies_group) #meto en colisiones la lista de enemigos con los que ha colisionado la nave
         for b in colisiones: # si hay colisones (elementos en la lista):
             self.lives -= 1 #resta una vida
-            self.vidas = self.font_vidas.render(str(self.lives), True, WHITE)
+            self.vidas = self.font.render(str(self.lives), True, WHITE)
             self.enemies_group.empty() #vacio el grupo de enemigos
             self.player_group.empty() #vacio el grupo de player
             self.explosion_group.add(Explosion(self.nave.rect.x,self.nave.rect.y)) #instancio una explosion y la añado al grupo explosion
@@ -308,9 +290,7 @@ class AnimacionPantalla:
         
         self.change_screen = False
         self.next_screen = None
-
-        #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
-        
+  
     def handleEvents(self, event):
         for ev in event.get():
             if ev.type == QUIT:
@@ -333,8 +313,7 @@ class AnimacionPantalla:
     def draw(self, screen):
         screen.blit(self.background_img, (0, 0)) #pinto el fonfo en las coordenadas elegidas
         
-        screen.blit(self.nave.image, (self.nave.rect.x, self.nave.rect.y))
-        
+        screen.blit(self.nave.image, (self.nave.rect.x, self.nave.rect.y - self.nave.rect.h/2))
 
         texto = ["Capitana Zur: Hemos superado la nube",
                  "              de asteroides.",
@@ -357,10 +336,8 @@ class ScorePantalla:
         self.puntuacion = self.font_puntuacion.render("Puntuación", True, (WHITE))
         
         self.font_texto_salir = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
-        self.texto_salir = self.font_texto_salir.render("Salir <espacio>", True, (WHITE))
+        self.texto_salir = self.font_texto_salir.render("Salir <space>", True, (WHITE))
 
-        #self.music = pg.mixer.Sound('resources/sounds/<SONIDO>')
-        
         self.alto_linea = 25
         self.margen = 6 
         self.scores = []
@@ -399,7 +376,6 @@ class ScorePantalla:
                 sys.exit()
             if ev.type == KEYDOWN:
                 if ev.key == K_SPACE:
-                    print("Paso a InicioPantalla")
                     self.change_screen = True
                     self.next_screen = InicioPantalla()
       
@@ -420,7 +396,6 @@ class Ranking:
         self.change_screen = False
         self.next_screen = ScorePantalla()
        
-    
     def dbWrite(self):
         conn = sqlite3.connect('data/database.db')
         cursor = conn.cursor()
@@ -498,7 +473,6 @@ class Ranking:
                     self.change_screen = True
                     self.next_screen = ScorePantalla()
                     
-
     def update(self, dt):
         pass
 
