@@ -160,6 +160,8 @@ class JuegoPantalla(pg.sprite.Sprite):
 
         self.font_puntos = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
         self.marcadorP = self.font_puntos.render("Puntos:", True, WHITE)
+        self.font_nivel = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
+        self.texto_nivel = self.font_nivel.render("Nivel: " + str(self.nivel), True, WHITE)
         self.puntos = self.font_puntos.render("0", True, WHITE)
         self.font_vidas = pg.font.Font('resources/fonts/PressStart2P.ttf', 20)
         self.marcadorV = self.font_vidas.render("Vidas:", True, WHITE)
@@ -233,7 +235,7 @@ class JuegoPantalla(pg.sprite.Sprite):
             frame.update(dt)
         
         self.level_time += 1
-        if self.level_time == 360: #1min(60seg*60vpseg)
+        if self.level_time == 3600: #1min(60seg*60vpseg)
             print("paso a la pantalla de la animación")   
             self.change_screen = True
             self.next_screen = AnimacionPantalla(self.nivel, self.score)
@@ -265,6 +267,7 @@ class JuegoPantalla(pg.sprite.Sprite):
         screen.blit(self.puntos, (700, 20)) 
         screen.blit(self.marcadorV, (550, 40))
         screen.blit(self.vidas, (700, 40))
+        screen.blit(self.texto_nivel, (20,20))
         
         self.explosion_group.draw(screen)
         
